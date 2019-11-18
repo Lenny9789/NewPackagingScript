@@ -180,51 +180,51 @@ func ChangeTargetAppIcon(target string) error {
 				for _, config := range json_Data.Images {
 					switch config.Size {
 					case "20x20":
-						if config.Scale  == "2x" {
+						if config.Scale  == "2x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_20pt@2x.png") == nil {
 								fmt.Println("修改 Appicon-> 20pt -> 2x  成功!!!")
 							}
 						}
-						if config.Scale  == "3x" {
+						if config.Scale  == "3x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_20pt@3x.png") == nil {
 								fmt.Println("修改 Appicon-> 20pt -> 3x  成功!!!")
 							}
 						}
 					case "29x29":
-						if config.Scale  == "2x" {
+						if config.Scale  == "2x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_29pt@2x.png") == nil {
 								fmt.Println("修改 Appicon-> 29pt -> 2x  成功!!!")
 							}
 						}
-						if config.Scale  == "3x" {
+						if config.Scale  == "3x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_29pt@3x.png") == nil {
 								fmt.Println("修改 Appicon-> 29pt -> 3x  成功!!!")
 							}
 						}
 					case "40x40":
-						if config.Scale  == "2x" {
+						if config.Scale  == "2x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_40pt@2x.png") == nil {
 								fmt.Println("修改 Appicon-> 40pt -> 2x  成功!!!")
 							}
 						}
-						if config.Scale  == "3x" {
+						if config.Scale  == "3x"  && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_40pt@3x.png") == nil {
 								fmt.Println("修改 Appicon-> 40pt -> 3x  成功!!!")
 							}
 						}
 					case "60x60":
-						if config.Scale  == "2x" {
+						if config.Scale  == "2x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_60pt@2x.png") == nil {
 								fmt.Println("修改 Appicon-> 60pt -> 2x  成功!!!")
 							}
 						}
-						if config.Scale  == "3x" {
+						if config.Scale  == "3x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_60pt@3x.png") == nil {
 								fmt.Println("修改 Appicon-> 60pt -> 3x  成功!!!")
 							}
 						}
 					case "1024x1024":
-						if config.Scale  == "1x" {
+						if config.Scale  == "1x" && len(config.FileName) > 0 {
 							if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/AppIcon.appiconset/appicon_1024*1024.png") == nil {
 								fmt.Println("修改 Appicon-> 1024   成功!!!")
 							}
@@ -257,27 +257,27 @@ func ChangeTargetAppIcon(target string) error {
 					os.Exit(0)
 				}
 				for _, config := range json_Data.Images {
-					if config.Subtype == "2436h" {
+					if config.Subtype == "2436h" && len(config.FileName) > 0 {
 						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/X.png") == nil {
 							fmt.Println("修改 LaunchImage -> X   成功!!!")
 						}
 					}
-					if config.Subtype == "736h" {
+					if config.Subtype == "736h" && len(config.FileName) > 0 {
 						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_1242*2208.png") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_1242*2208   成功!!!")
 						}
 					}
-					if config.Subtype == "667h" {
+					if config.Subtype == "667h" && len(config.FileName) > 0 {
 						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_750*1334.png") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_750*1334  成功!!!")
 						}
 					}
-					if config.Subtype == "retina4" {
+					if config.Subtype == "retina4" && len(config.FileName) > 0 {
 						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*1136.png") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_640*1136   成功!!!")
 						}
 					}
-					if config.Subtype == "" {
+					if config.Subtype == "" && len(config.FileName) > 0 {
 						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*960.png") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_640*960   成功!!!")
 						}

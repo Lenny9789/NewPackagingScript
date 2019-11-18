@@ -91,8 +91,14 @@ func Archive(info BuildInfo) error {
 		"-workspace", workspace,
 		"-scheme", info.Scheme,
 		"-archivePath", info.ArchPath + "/" + info.Scheme,
-		"-configuration", "Release",
-		"ONLY_ACTIVE_ARCH=NO", "CODE_SIGN_IDENTITY='iPhone Developer'", "PROVISIONING_PROFILE_SPECIFIER='Automatic'", "PROVISIONING_PROFILE='Automatic'", "CODE_SIGN_STYLE='Automatic'", "PROVISIONING_STYLE='Automatic'", "DEVELOPMENT_TEAM=" + codeSignTeamIdentifier())
+		"-configuration", "Release")
+		//"ONLY_ACTIVE_ARCH=NO",
+		//"CODE_SIGN_IDENTITY=" + "iPhone Developer",
+		//"PROVISIONING_PROFILE_SPECIFIER=" + "Automatic",
+		//"PROVISIONING_PROFILE=" + "Automatic",
+		//"CODE_SIGN_STYLE=" + "Automatic",
+		//"PROVISIONING_STYLE=" + "Automatic",
+		//"DEVELOPMENT_TEAM=" + codeSignTeamIdentifier())
 	archCommand.Stdout = os.Stdout
 	fmt.Println("Method: --> archive Command -->\n", archCommand)
 	err  = archCommand.Run()
@@ -169,6 +175,6 @@ func PackagingTarget(target string) {
 
 func codeSignTeamIdentifier() string {
 	// todo
-
+	return "89N5764FT3"
 	return ""
 }
