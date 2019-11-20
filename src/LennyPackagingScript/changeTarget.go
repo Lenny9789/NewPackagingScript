@@ -293,6 +293,34 @@ func ChangeTargetAppIcon(target string) error {
 	return nil
 }
 
+func loadApplicationConfigInfo() error {
+
+	j, err := ioutil.ReadFile(inside_CurrentPath + "/FEC/targetConfig.json")
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Println(string(j))
+
+	json_Data := &ApplicationConfigs{}
+	err = json.Unmarshal([]byte(j), json_Data)
+	if err != nil {
+		fmt.Println("------------> Json 文件格式错误, 干你木.")
+		panic(err)
+	}
+
+	var index_Config int
+	for index, item := range json_Data.Configs {
+		if item.Application_TargetName == strings.ToUpper(Info_Build.TargetName) {
+			index_Config = index
+		}
+	}
+	if strings.ToUpper(Info_Build.TargetName) != json_Data.Configs[index_Config].Application_TargetName {
+		fmt.Println("Json 配置文件中没有这个盘口. 干!!!")
+		os.Exit(0)
+	}
+	applicationConfigInfo = json_Data.Configs[index_Config]
+	return nil
+}
 func ChangeTarget_By_ModifiFieldContent(target string) error {
 
 	Info_Build.TargetName = target
@@ -312,34 +340,14 @@ func ChangeTarget_By_ModifiFieldContent(target string) error {
 	}
 	fmt.Println(data.CFBundleDisplayName + data.CFBundleVersion + data.CFBundleShortVersionString)
 	// 读取Json配置文件, 并将配置文件中的信息写到 PList 结构体中.
-	j, err := ioutil.ReadFile(inside_CurrentPath + "/FEC/targetConfig.json")
-	if err != nil {
-		panic(err)
+	if loadApplicationConfigInfo() != nil {
+		//
 	}
-	//fmt.Println(string(j))
-
-	json_Data := &ApplicationConfigs{}
-	err = json.Unmarshal([]byte(j), json_Data)
-	if err != nil {
-		fmt.Println("------------> Json 文件格式错误, 干你木.")
-		panic(err)
-	}
-
-	var index_Config int
-	for index, item := range json_Data.Configs {
-		if item.Application_TargetName == strings.ToUpper(target) {
-			index_Config = index
-		}
-	}
-	if strings.ToUpper(target) != json_Data.Configs[index_Config].Application_TargetName {
-		fmt.Println("Json 配置文件中没有这个盘口. 干!!!")
-		os.Exit(0)
-	}
-	data.LennyBundleTargetName = json_Data.Configs[index_Config].Application_TargetName
-	data.CFBundleDisplayName = json_Data.Configs[index_Config].Application_DisplayName
-	data.CFBundleIdentifier = json_Data.Configs[index_Config].Application_BundleIdentifier
-	data.CFBundleShortVersionString = json_Data.Configs[index_Config].Application_Version
-	data.CFBundleVersion = json_Data.Configs[index_Config].Application_BuildVersion
+	data.LennyBundleTargetName = applicationConfigInfo.Application_TargetName
+	data.CFBundleDisplayName = applicationConfigInfo.Application_DisplayName
+	data.CFBundleIdentifier = applicationConfigInfo.Application_BundleIdentifier
+	data.CFBundleShortVersionString = applicationConfigInfo.Application_Version
+	data.CFBundleVersion = applicationConfigInfo.Application_BuildVersion
 	// 将已经修改完的 Plist 结构体对象转为 PList 文件并写入到工程文件中.
 	bf := &bytes.Buffer{}
 	encoder := plist.NewEncoder(bf)
@@ -364,4 +372,59 @@ func isExist(path string) bool  {
 		return false
 	}
 	return true
+}
+
+
+type PbxprojConfig struct {
+	Objects map[string]dict		`plist:"objects""`
+	RootObject string	`plist:"rootObject"`
+}
+
+type dict map[string]interface{}
+func ChangeXcodeProj_pbxproj(target string) error {
+	var tempMap map[string]interface{}
+	var targets []interface{}
+	var buildConfigurations []interface{}
+	var buildSettingKey_Releasae string
+	//path := "/Users/lenny/XcodeProjects/a_ios/Convert.xcodeproj/project.pbxproj"
+	path := Info_Build.Path + "/Convert.xcodeproj/project.pbxproj"
+	f, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(f))
+	buf := bytes.NewReader([]byte(f))
+	var data PbxprojConfig
+	//把读取的 Plist 格式化为结构体
+	decoder := plist.NewDecoder(buf)
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println(err)
+	}
+	tempMap = data.Objects[data.RootObject]
+	targets = tempMap["targets"].([]interface{})
+	targetsBuildSetting := data.Objects[targets[0].(string)]
+	fmt.Println("targetsBuildSetting-->: ", targetsBuildSetting)
+	buildConfigurationList := targetsBuildSetting["buildConfigurationList"].(string)
+	fmt.Println("buildConfigurationList-->: ", buildConfigurationList)
+	buildConfigurations = data.Objects[buildConfigurationList]["buildConfigurations"].([]interface{})
+	for _, item := range buildConfigurations {
+		itemString := item.(string)
+		buildSettingKey_Releasae = itemString
+		if buildSettingKey_Releasae == "" {
+			fmt.Println("没有找到 BuildSettings!!!")
+			os.Exit(0)
+		}
+		key_Development_Team := "objects:" + buildSettingKey_Releasae + ":buildSettings:DEVELOPMENT_TEAM"
+		if execCommand("/usr/libexec/PlistBuddy", "-c", "Set :" + key_Development_Team  + " " + codeSignTeamIdentifier() , path) == nil {
+			fmt.Println("pbxproj文件修改成功--> DEVELOPMENT TEAM.!!!")
+		}
+		key_BundleID := "objects:" + buildSettingKey_Releasae + ":buildSettings:PRODUCT_BUNDLE_IDENTIFIER"
+		_ = loadApplicationConfigInfo()
+		if execCommand("/usr/libexec/PlistBuddy", "-c", "Set :" + key_BundleID  + " "  + applicationConfigInfo.Application_BundleIdentifier , path) == nil {
+			fmt.Println("pbxproj文件修改成功--> Bundle ID.!!!")
+		}
+	}
+
+	return nil
 }

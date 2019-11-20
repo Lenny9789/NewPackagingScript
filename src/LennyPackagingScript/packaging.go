@@ -27,6 +27,7 @@ var (
 		"XY179", "XY180", "XY181", "XY182", "XY183", "XY185", "XY186", "XY187",
 	}
 	userName = ""
+	applicationConfigInfo = ApplicationConfigInfo{}
 )
 type BuildInfo struct {
 	Scheme		string `json:scheme`
@@ -56,6 +57,12 @@ func init() {
 	Info_Build.Path = path
 	Info_Build.ArchPath = "/Users/" + userName + "/Desktop/archiveDirectory"
 	Info_Build.ExportPath = "/Users/" + userName + "/Desktop/exportDirectory"
+
+	applicationConfigInfo.Application_TargetName = ""
+	applicationConfigInfo.Application_DisplayName = ""
+	applicationConfigInfo.Application_BuildVersion = ""
+	applicationConfigInfo.Application_Version = ""
+	applicationConfigInfo.Application_BundleIdentifier = ""
 }
 
 
@@ -90,7 +97,7 @@ func Archive(info BuildInfo) error {
 	archCommand := exec.Command("xcodebuild", "archive",
 		"-workspace", workspace,
 		"-scheme", info.Scheme,
-		"-archivePath", info.ArchPath + "/" + info.Scheme,
+		"-archivePath", info.ArchPath + "/" + info.TargetName,
 		"-configuration", "Release")
 		//"ONLY_ACTIVE_ARCH=NO",
 		//"CODE_SIGN_IDENTITY=" + "iPhone Developer",
@@ -110,7 +117,7 @@ func Archive(info BuildInfo) error {
 
 func export(info BuildInfo) error {
 	fmt.Println("Method: -->", "export")
-	arch := info.ArchPath + "/" + info.Scheme + ".xcarchive"
+	arch := info.ArchPath + "/" + info.TargetName + ".xcarchive"
 	fmt.Println("Method: --> arch -->", arch)
 	export := exec.Command("xcodebuild", "-exportArchive",
 		"-archivePath", arch,
@@ -141,11 +148,12 @@ func PackagingFrom(target string) {
 
 	for ; index_Targets <= len(Targets); index_Targets++ {
 		Info_Build.TargetName = Targets[index_Targets]
-		if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil {
+		if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil &&
+			ChangeTargetAppIcon(Targets[index_Targets]) == nil &&
+			ChangeXcodeProj_pbxproj(Targets[index_Targets]) == nil {
 			if Archive(Info_Build) == nil {
 				if export(Info_Build) == nil {
 					//导出成功
-
 				}
 			}
 		}
@@ -161,20 +169,19 @@ func PackagingTarget(target string) {
 		}
 	}
 	Info_Build.TargetName = Targets[index_Targets]
-	if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil {
-		if ChangeTargetAppIcon(Targets[index_Targets]) == nil {
+	if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil &&
+		ChangeTargetAppIcon(Targets[index_Targets]) == nil &&
+		ChangeXcodeProj_pbxproj(Targets[index_Targets]) == nil {
 			if Archive(Info_Build) == nil {
 				if export(Info_Build) == nil {
 					//导出成功
-					fmt.Println()
 				}
 			}
-		}
 	}
 }
 
 func codeSignTeamIdentifier() string {
 	// todo
-	return "89N5764FT3"
+	return "2U94TLD4SJ"
 	return ""
 }
