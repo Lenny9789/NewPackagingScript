@@ -92,7 +92,7 @@ type LaunchImageContentConfig struct {
 type LaunchImageConfig struct {
 	Images []LaunchImageContentConfig `json:"images"`
 }
-func ChangeTarget_By_InsteadFile(target string) error {
+func changeTarget_By_InsteadFile(target string) error {
 	var index_Targets int
 	for index, item := range Targets {
 		if item == strings.ToUpper(target) {
@@ -125,19 +125,13 @@ func ChangeTarget_By_InsteadFile(target string) error {
 	return nil
 }
 
-func ChangeTargetAppIcon(target string) error {
-	var index_Targets int
-	for index, item := range Targets {
-		if item == strings.ToUpper(target) {
-			index_Targets = index
-			break
-		}
-	}
+func changeTargetAppIcon(info BuildInfo) error {
+
 	var index_Assets int
 	files_Assets, _ := ioutil.ReadDir("./FEC/AssetSource/")
 	for index, file := range files_Assets {
 		fmt.Println(file.Name())
-		if file.Name() == Targets[index_Targets] + ".xcassets" {
+		if file.Name() == Targets[info.TargetIndex] + ".xcassets" {
 			index_Assets = index
 			break
 		}
@@ -293,37 +287,34 @@ func ChangeTargetAppIcon(target string) error {
 	return nil
 }
 
-func loadApplicationConfigInfo() error {
+func loadApplicationConfigInfo(info BuildInfo) error {
 
 	j, err := ioutil.ReadFile(inside_CurrentPath + "/FEC/targetConfig.json")
 	if err != nil {
 		panic(err)
 	}
 	//fmt.Println(string(j))
-
 	json_Data := &ApplicationConfigs{}
 	err = json.Unmarshal([]byte(j), json_Data)
 	if err != nil {
 		fmt.Println("------------> Json 文件格式错误, 干你木.")
 		panic(err)
 	}
-
 	var index_Config int
 	for index, item := range json_Data.Configs {
-		if item.Application_TargetName == strings.ToUpper(Info_Build.TargetName) {
+		if item.Application_TargetName == strings.ToUpper(info.TargetName) {
 			index_Config = index
 		}
 	}
-	if strings.ToUpper(Info_Build.TargetName) != json_Data.Configs[index_Config].Application_TargetName {
+	if strings.ToUpper(info.TargetName) != json_Data.Configs[index_Config].Application_TargetName {
 		fmt.Println("Json 配置文件中没有这个盘口. 干!!!")
 		os.Exit(0)
 	}
 	applicationConfigInfo = json_Data.Configs[index_Config]
 	return nil
 }
-func ChangeTarget_By_ModifiFieldContent(target string) error {
+func changeTarget_By_ModifiFieldContent(info BuildInfo) error {
 
-	Info_Build.TargetName = target
 	//读取项目中的 Plist 文件  , 待修改
 	f, err := ioutil.ReadFile(inside_CurrentPath + "/FEC/Info/HBVertical.plist")
 	if err != nil {
@@ -340,7 +331,7 @@ func ChangeTarget_By_ModifiFieldContent(target string) error {
 	}
 	fmt.Println(data.CFBundleDisplayName + data.CFBundleVersion + data.CFBundleShortVersionString)
 	// 读取Json配置文件, 并将配置文件中的信息写到 PList 结构体中.
-	if loadApplicationConfigInfo() != nil {
+	if loadApplicationConfigInfo(info) != nil {
 		//
 	}
 	data.LennyBundleTargetName = applicationConfigInfo.Application_TargetName
@@ -379,15 +370,15 @@ type PbxprojConfig struct {
 	Objects map[string]dict		`plist:"objects""`
 	RootObject string	`plist:"rootObject"`
 }
-
 type dict map[string]interface{}
-func ChangeXcodeProj_pbxproj(target string) error {
+
+func changeXcodeProj_pbxproj(info BuildInfo) error {
 	var tempMap map[string]interface{}
 	var targets []interface{}
 	var buildConfigurations []interface{}
 	var buildSettingKey_Releasae string
 	//path := "/Users/lenny/XcodeProjects/a_ios/Convert.xcodeproj/project.pbxproj"
-	path := Info_Build.Path + "/Convert.xcodeproj/project.pbxproj"
+	path := info.Path + "/Convert.xcodeproj/project.pbxproj"
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
@@ -420,11 +411,14 @@ func ChangeXcodeProj_pbxproj(target string) error {
 			fmt.Println("pbxproj文件修改成功--> DEVELOPMENT TEAM.!!!")
 		}
 		key_BundleID := "objects:" + buildSettingKey_Releasae + ":buildSettings:PRODUCT_BUNDLE_IDENTIFIER"
-		_ = loadApplicationConfigInfo()
+		_ = loadApplicationConfigInfo(Info_Build)
 		if execCommand("/usr/libexec/PlistBuddy", "-c", "Set :" + key_BundleID  + " "  + applicationConfigInfo.Application_BundleIdentifier , path) == nil {
 			fmt.Println("pbxproj文件修改成功--> Bundle ID.!!!")
 		}
 	}
-
 	return nil
+}
+
+func changeTargetExportOptionsFile(info BuildInfo) error {
+	return execCommand("cp", inside_CurrentPath + "/ExportOptionsConfig/" + codeSignTeamIdentifier(info) + ".plist", inside_CurrentPath + "/ExportOptions.plist")
 }

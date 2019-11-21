@@ -17,7 +17,7 @@ func main() {
 		os.Exit(0)
 	}else if args[0] == "-t" {
 		//测试功能专用
-		LennyPkgSpt.ChangeXcodeProj_pbxproj("")
+		LennyPkgSpt.ChangeXcodeProj_pbxproj(LennyPkgSpt.Info_Build)
 	}else if args[0] == "-s" {		// 打单个的包
 		targetName := args[1]
 		LennyPkgSpt.PackagingTarget(targetName)

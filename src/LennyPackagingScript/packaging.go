@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"reflect"
 	"strings"
 )
 
@@ -38,6 +39,7 @@ type BuildInfo struct {
 	Config 		string `json:"config"`
 	ApiToken 	string `json:"apiToken"`
 	TargetName	string `json:"target_name"`
+	TargetIndex	int		`json:"target_index"`
 }
 
 func init() {
@@ -66,7 +68,7 @@ func init() {
 }
 
 
-func Archive(info BuildInfo) error {
+func archive(info BuildInfo) error {
 	fmt.Println("Target: -->", info.Scheme)
 	fmt.Println("Path: -->", info.Path)
 	fmt.Println("WorkSpace: -->", info.WorkSpace)
@@ -138,50 +140,113 @@ func export(info BuildInfo) error {
 }
 
 func PackagingFrom(target string) {
-	var index_Targets int
 	for index, item := range Targets {
 		if item == strings.ToUpper(target) {
-			index_Targets = index
+			Info_Build.TargetIndex = index
 			break
 		}
 	}
 
-	for ; index_Targets <= len(Targets); index_Targets++ {
-		Info_Build.TargetName = Targets[index_Targets]
-		if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil &&
-			ChangeTargetAppIcon(Targets[index_Targets]) == nil &&
-			ChangeXcodeProj_pbxproj(Targets[index_Targets]) == nil {
-			if Archive(Info_Build) == nil {
-				if export(Info_Build) == nil {
-					//导出成功
-				}
-			}
+	for ; Info_Build.TargetIndex <= len(Targets); Info_Build.TargetIndex++ {
+		Info_Build.TargetName = Targets[Info_Build.TargetIndex]
+		if ChangeTarget_By_ModifiFieldContent(Info_Build) != nil {
+			fmt.Println("修改 Plist 文件出错...!!!")
+			os.Exit(0)
+		}
+		if ChangeTargetAppIcon(Info_Build) != nil {
+			fmt.Println("修改 AppIcon 出错...!!!")
+			os.Exit(0)
+		}
+		if ChangeXcodeProj_pbxproj(Info_Build) != nil {
+			fmt.Println("切换账号出错-->..!!!")
+			os.Exit(0)
+		}
+		if archive(Info_Build) != nil {
+			fmt.Println("Archive 出错-->.!!!")
+			os.Exit(0)
+		}
+		if export(Info_Build) != nil {
+			fmt.Println("导出 IPA 出错-->. !!!")
 		}
 	}
 }
 
 func PackagingTarget(target string) {
-	var index_Targets int
 	for index, item := range Targets {
 		if item == strings.ToUpper(target) {
-			index_Targets = index
+			Info_Build.TargetIndex = index
 			break
 		}
 	}
-	Info_Build.TargetName = Targets[index_Targets]
-	if ChangeTarget_By_ModifiFieldContent(Targets[index_Targets]) == nil &&
-		ChangeTargetAppIcon(Targets[index_Targets]) == nil &&
-		ChangeXcodeProj_pbxproj(Targets[index_Targets]) == nil {
-			if Archive(Info_Build) == nil {
-				if export(Info_Build) == nil {
-					//导出成功
-				}
-			}
+	Info_Build.TargetName = Targets[Info_Build.TargetIndex]
+	if changeTarget_By_ModifiFieldContent(Info_Build) != nil {
+		fmt.Println("修改 Plist 文件出错...!!!")
+		os.Exit(0)
+	}
+	if changeTargetAppIcon(Info_Build) != nil {
+		fmt.Println("修改 AppIcon 出错...!!!")
+		os.Exit(0)
+	}
+	if changeXcodeProj_pbxproj(Info_Build) != nil {
+		fmt.Println("切换账号出错-->..!!!")
+		os.Exit(0)
+	}
+	if changeTargetExportOptionsFile(Info_Build) != nil {
+		//
+	}
+	if archive(Info_Build) != nil {
+		fmt.Println("Archive 出错-->.!!!")
+		os.Exit(0)
+	}
+	if export(Info_Build) != nil {
+		fmt.Println("导出 IPA 出错-->. !!!")
 	}
 }
 
-func codeSignTeamIdentifier() string {
-	// todo
-	return "2U94TLD4SJ"
+func codeSignTeamIdentifier(info BuildInfo) string {
+
+	var container1 = []string{"XY000T", "XY001", "XY002", "XY003", "XY005", "XY006", "XY007", "XY008", "XY009", "XY010"}
+	var container2 = []string{"XY011", "XY012", "XY013", "XY015", "XY016", "XY017", "XY018", "XY019", "XY020", "XY021", "XY022", "XY023", "XY025", "XY026", "XY027", "XY028", "XY029", "XY030"}
+	var container3 = []string{"XY031", "XY032", "XY033", "XY035", "XY036", "XY037", "XY039", "XY050", "XY051", "XY052", "XY053", "XY055", "XY056", "XY057", "XY058", "XY059", "XY060"}
+	var container4 = []string{"XY061", "XY062", "XY063", "XY065", "XY066", "XY067", "XY068", "XY069", "XY070", "XY071", "XY072", "XY073", "XY075", "XY076", "XY077", "XY078", "XY079", "XY080"}
+	var container5 = []string{"XY081", "XY082", "XY083", "XY085", "XY086", "XY087", "XY088", "XY089", "XY090", "XY091", "XY092", "XY093", "XY095", "XY096", "XY097", "XY098", "XY099", "XY100"}
+	var container6 = []string{"XY101", "XY102", "XY103", "XY105", "XY106", "XY107", "XY108", "XY109", "XY110", "XY111", "XY112", "XY113", "XY115", "XY116", "XY117", "XY118", "XY119", "XY120"}
+	var container7 = []string{"XY121", "XY122", "XY123", "XY125", "XY126", "XY127", "XY128", "XY129", "XY130", "XY131", "XY132", "XY133", "XY135", "XY136", "XY137", "XY138", "XY139"}
+	var container8 = []string{"XY150", "XY151", "XY152", "XY153", "XY155", "XY156", "XY157", "XY158", "XY159", "XY160", "XY161", "XY162", "XY163", "XY165", "XY166", "XY167", "XY168", "XY169", "XY170"}
+	var container9 = []string{"XY171", "XY172", "XY173", "XY175", "XY176", "XY177", "XY178", "XY179", "XY180", "XY181", "XY182", "XY183", "XY185", "XY186", "XY187", "XY188", "XY189", "XY190"}
+	if contains(container1, info.TargetName) >= 0 {
+		return "2U94TLD4SJ"
+	}else if contains(container2, info.TargetName) >= 0 {
+		return "93Y4U3V625"
+	}else if contains(container3, info.TargetName) >= 0 {
+		return "CV4VR2BK32"
+	}else if contains(container4, info.TargetName) >= 0 {
+		return ""
+	}else if contains(container5, info.TargetName) >= 0 {
+		return ""
+	}else if contains(container6, info.TargetName) >= 0 {
+		return ""
+	}else if contains(container7, info.TargetName) >= 0 {
+		return ""
+	}else if contains(container8, info.TargetName) >= 0 {
+		return ""
+	}else if contains(container9, info.TargetName) >= 0 {
+		return ""
+	}
 	return ""
+}
+
+func contains(array interface{}, args interface{}) (index int) {
+	index = -1
+	switch reflect.TypeOf(array).Kind() {
+	case reflect.Slice:
+		a := reflect.ValueOf(array)
+		for i := 0; i < a.Len(); i++ {
+			if reflect.DeepEqual(args, a.Index(i).Interface()) {
+				index = i
+				return
+			}
+		}
+	}
+	return
 }
