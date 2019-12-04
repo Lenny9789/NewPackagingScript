@@ -59,7 +59,7 @@ func init() {
 	Info_Build.Path = path
 	Info_Build.ArchPath = "/Users/" + userName + "/Desktop/archiveDirectory"
 	Info_Build.ExportPath = "/Users/" + userName + "/Desktop/exportDirectory"
-
+	Info_Build.TargetName = "XY000T"
 	applicationConfigInfo.Application_TargetName = ""
 	applicationConfigInfo.Application_DisplayName = ""
 	applicationConfigInfo.Application_BuildVersion = ""
@@ -146,18 +146,17 @@ func PackagingFrom(target string) {
 			break
 		}
 	}
-
 	for ; Info_Build.TargetIndex <= len(Targets); Info_Build.TargetIndex++ {
 		Info_Build.TargetName = Targets[Info_Build.TargetIndex]
-		if ChangeTarget_By_ModifiFieldContent(Info_Build) != nil {
+		if changeTarget_By_ModifiFieldContent(Info_Build) != nil {
 			fmt.Println("修改 Plist 文件出错...!!!")
 			os.Exit(0)
 		}
-		if ChangeTargetAppIcon(Info_Build) != nil {
+		if changeTargetAppIcon(Info_Build) != nil {
 			fmt.Println("修改 AppIcon 出错...!!!")
 			os.Exit(0)
 		}
-		if ChangeXcodeProj_pbxproj(Info_Build) != nil {
+		if changeXcodeProj_pbxproj(Info_Build) != nil {
 			fmt.Println("切换账号出错-->..!!!")
 			os.Exit(0)
 		}
@@ -167,6 +166,51 @@ func PackagingFrom(target string) {
 		}
 		if export(Info_Build) != nil {
 			fmt.Println("导出 IPA 出错-->. !!!")
+		}
+		if RemoteTransfer(Info_Build) != nil {
+			fmt.Println("上传到共享盘失败...!!!")
+			os.Exit(0)
+		}
+	}
+}
+func Packaging(from string, to string) {
+	for index, item := range Targets {
+		if item == strings.ToUpper(from) {
+			Info_Build.TargetIndex = index
+			break
+		}
+	}
+	var index_To int
+	for index, item := range Targets {
+		if item == strings.ToUpper(to) {
+			index_To = index
+			break
+		}
+	}
+	for ; Info_Build.TargetIndex <= index_To; Info_Build.TargetIndex++ {
+		Info_Build.TargetName = Targets[Info_Build.TargetIndex]
+		if changeTarget_By_ModifiFieldContent(Info_Build) != nil {
+			fmt.Println("修改 Plist 文件出错...!!!")
+			os.Exit(0)
+		}
+		if changeTargetAppIcon(Info_Build) != nil {
+			fmt.Println("修改 AppIcon 出错...!!!")
+			os.Exit(0)
+		}
+		if changeXcodeProj_pbxproj(Info_Build) != nil {
+			fmt.Println("切换账号出错-->..!!!")
+			os.Exit(0)
+		}
+		if archive(Info_Build) != nil {
+			fmt.Println("Archive 出错-->.!!!")
+			os.Exit(0)
+		}
+		if export(Info_Build) != nil {
+			fmt.Println("导出 IPA 出错-->. !!!")
+		}
+		if RemoteTransfer(Info_Build) != nil {
+			fmt.Println("上传到共享盘失败...!!!")
+			os.Exit(0)
 		}
 	}
 }
@@ -201,6 +245,10 @@ func PackagingTarget(target string) {
 	if export(Info_Build) != nil {
 		fmt.Println("导出 IPA 出错-->. !!!")
 	}
+	if RemoteTransfer(Info_Build) != nil {
+		fmt.Println("上传到共享盘失败...!!!")
+		os.Exit(0)
+	}
 }
 
 func codeSignTeamIdentifier(info BuildInfo) string {
@@ -221,17 +269,19 @@ func codeSignTeamIdentifier(info BuildInfo) string {
 	}else if contains(container3, info.TargetName) >= 0 {
 		return "CV4VR2BK32"
 	}else if contains(container4, info.TargetName) >= 0 {
-		return ""
+		return "8X36854WB2"
 	}else if contains(container5, info.TargetName) >= 0 {
-		return ""
+		return "3D37BN9GYF"
 	}else if contains(container6, info.TargetName) >= 0 {
-		return ""
+		return "P7M4387Y6U"
 	}else if contains(container7, info.TargetName) >= 0 {
-		return ""
+		return "K435P4QZ9J"
 	}else if contains(container8, info.TargetName) >= 0 {
-		return ""
+		return "PHS6ACGVHM"
 	}else if contains(container9, info.TargetName) >= 0 {
-		return ""
+		//return ""
+		fmt.Println("盘口对应的开发者账号没有添加....!!!")
+		os.Exit(0)
 	}
 	return ""
 }

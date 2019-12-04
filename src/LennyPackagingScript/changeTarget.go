@@ -407,7 +407,7 @@ func changeXcodeProj_pbxproj(info BuildInfo) error {
 			os.Exit(0)
 		}
 		key_Development_Team := "objects:" + buildSettingKey_Releasae + ":buildSettings:DEVELOPMENT_TEAM"
-		if execCommand("/usr/libexec/PlistBuddy", "-c", "Set :" + key_Development_Team  + " " + codeSignTeamIdentifier() , path) == nil {
+		if execCommand("/usr/libexec/PlistBuddy", "-c", "Set :" + key_Development_Team  + " " + codeSignTeamIdentifier(info) , path) == nil {
 			fmt.Println("pbxproj文件修改成功--> DEVELOPMENT TEAM.!!!")
 		}
 		key_BundleID := "objects:" + buildSettingKey_Releasae + ":buildSettings:PRODUCT_BUNDLE_IDENTIFIER"

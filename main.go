@@ -17,14 +17,18 @@ func main() {
 		os.Exit(0)
 	}else if args[0] == "-t" {
 		//测试功能专用
-		LennyPkgSpt.ChangeXcodeProj_pbxproj(LennyPkgSpt.Info_Build)
+		LennyPkgSpt.RemoteTransfer(LennyPkgSpt.Info_Build)
+	}else if args[0] == "-m" {		// 打单个的包
+		//targetName := args[1]
+		//LennyPkgSpt.PackagingTarget(targetName)
 	}else if args[0] == "-s" {		// 打单个的包
 		targetName := args[1]
 		LennyPkgSpt.PackagingTarget(targetName)
-	}else if args[0] == "-from" && args[1] != "-to" {   	//从某一个盘口开始全部打完
+	}else if args[0] == "-from" && args[2] != "to" {   	//从某一个盘口开始全部打完
 		targetName := args[1]
 		LennyPkgSpt.PackagingFrom(targetName)
-	}else if args[0] == "-from" && args[1] == "-to" { 		//从指定盘口开始打到 指定盘口
-
+	}else if args[0] == "-from" && args[2] == "-to" { 		//从指定盘口开始打到 指定盘口
+		from := args[1]; to := args[3]
+		LennyPkgSpt.Packaging(from, to)
 	}
 }
