@@ -189,29 +189,7 @@ func Packaging(from string, to string) {
 	}
 	for ; Info_Build.TargetIndex <= index_To; Info_Build.TargetIndex++ {
 		Info_Build.TargetName = Targets[Info_Build.TargetIndex]
-		if changeTarget_By_ModifiFieldContent(Info_Build) != nil {
-			fmt.Println("修改 Plist 文件出错...!!!")
-			os.Exit(0)
-		}
-		if changeTargetAppIcon(Info_Build) != nil {
-			fmt.Println("修改 AppIcon 出错...!!!")
-			os.Exit(0)
-		}
-		if changeXcodeProj_pbxproj(Info_Build) != nil {
-			fmt.Println("切换账号出错-->..!!!")
-			os.Exit(0)
-		}
-		if archive(Info_Build) != nil {
-			fmt.Println("Archive 出错-->.!!!")
-			os.Exit(0)
-		}
-		if export(Info_Build) != nil {
-			fmt.Println("导出 IPA 出错-->. !!!")
-		}
-		if RemoteTransfer(Info_Build) != nil {
-			fmt.Println("上传到共享盘失败...!!!")
-			os.Exit(0)
-		}
+		PackagingTarget(Info_Build.TargetName)
 	}
 }
 
@@ -279,7 +257,8 @@ func codeSignTeamIdentifier(info BuildInfo) string {
 	}else if contains(container8, info.TargetName) >= 0 {
 		return "PHS6ACGVHM"
 	}else if contains(container9, info.TargetName) >= 0 {
-		//return ""
+		return "M37N5BC9S4"
+	}else {
 		fmt.Println("盘口对应的开发者账号没有添加....!!!")
 		os.Exit(0)
 	}

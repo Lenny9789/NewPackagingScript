@@ -252,27 +252,27 @@ func changeTargetAppIcon(info BuildInfo) error {
 				}
 				for _, config := range json_Data.Images {
 					if config.Subtype == "2436h" && len(config.FileName) > 0 {
-						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/X.png") == nil {
+						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + strings.ReplaceAll(config.FileName, ".png", ".jpg"), "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/X.jpg") == nil {
 							fmt.Println("修改 LaunchImage -> X   成功!!!")
 						}
 					}
 					if config.Subtype == "736h" && len(config.FileName) > 0 {
-						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_1242*2208.png") == nil {
+						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + strings.ReplaceAll(config.FileName, ".png", ".jpg"), "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_1242*2208.jpg") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_1242*2208   成功!!!")
 						}
 					}
 					if config.Subtype == "667h" && len(config.FileName) > 0 {
-						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_750*1334.png") == nil {
+						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + strings.ReplaceAll(config.FileName, ".png", ".jpg"), "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_750*1334.jpg") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_750*1334  成功!!!")
 						}
 					}
 					if config.Subtype == "retina4" && len(config.FileName) > 0 {
-						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*1136.png") == nil {
+						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + strings.ReplaceAll(config.FileName, ".png", ".jpg"), "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*1136.jpg") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_640*1136   成功!!!")
 						}
 					}
 					if config.Subtype == "" && len(config.FileName) > 0 {
-						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + config.FileName, "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*960.png") == nil {
+						if execCommand("cp", "./FEC/AssetSource/" + files_Assets[index_Assets].Name() + "/" + file_imageType.Name() + "/" + strings.ReplaceAll(config.FileName, ".png", ".jpg"), "./FEC/AssetSource/UniqueAppIcon.xcassets/LaunchImage.launchimage/launchimage_640*960.jpg") == nil {
 							fmt.Println("修改 LaunchImage -> launchimage_640*960   成功!!!")
 						}
 					}
